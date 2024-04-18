@@ -35,7 +35,7 @@ pipe_passar = False
 
 #IMAGENS
 bg = pygame.image.load('img/bg.png')
-chao = pygame.image.load('img/ground.png')
+chao_img = pygame.image.load('img/ground.png')
 botao_img = pygame.image.load('img/restart.png')
 
 #TEXTO
@@ -86,26 +86,16 @@ class Bird(pygame.sprite.Sprite):
 
         if fim == False:
 
-            #GERAR NOVOS PIPES
-            time_now = pygame.time.get_ticks()
-            if time_now - ultimo_pipe > frequencia_pipe:
-                pipe_de_baixo = Pipe(largura, int(altura / 2), -1)
-                pipe_de_cima = Pipe(largura, int(altura / 2), 1)
-                pipe_group.add(pipe_de_baixo)
-                pipe_group.add(pipe_de_cima)
-
-                ultimo_pipe = time_now
-
             #PULAR NO CLIQUE ESQUERDO DO MOUSE
             if pygame.mouse.get_pressed()[0] == 1 and self.clicar == False:
                 self.clicar = True
-                self.veloc = -10
-
+                self.vel = -10
             if pygame.mouse.get_pressed()[0] == 0:
                 self.clicar = False
 
             self.counter += 1
             cooldown = 5
+
             if self.counter > cooldown:
                 self.counter = 0
                 self.index += 1
@@ -186,14 +176,14 @@ while run:
     pipe_group.draw(tela)
 
     #DESENHAR O CHAO
-    tela.blit(chao, (terra_scroll, 760))
+    tela.blit(chao_img, (terra_scroll, 760))
 
     #VERIFICAR A PONTUACAO
     if len(pipe_group) > 0:
         #0 POIS SO TEM UM PASSARO
-        if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.left \
-        and bird_group.sprites()[0].rect.right > pipe_group.sprites()[0].rect.right \
-        and pipe_passar == False:
+        if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.left\
+            and bird_group.sprites()[0].rect.right < pipe_group.sprites()[0].rect.right\
+            and pipe_passar == False:
             pipe_passar = True
         if pipe_passar == True:
             if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.right:
@@ -223,6 +213,7 @@ while run:
 
             pipe_group.add(pipe_de_baixo)
             pipe_group.add(pipe_de_cima)
+            ultimo_pipe = time_now
 
         #CHAO
         terra_scroll -= veloc_scroll
@@ -241,8 +232,8 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN and voando == False and fim == False:
-            voando = True
+            voando = True    
 
     #ATUALIZAR O JOGO  
     pygame.display.update()
-pygame.quit 
+pygame.quit     
